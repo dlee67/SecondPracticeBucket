@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private CheckBox checkBox;
     private LinearLayout roll;
     private LayoutInflater inflater;
-    private RelativeLayout someView; // Will be used as a global scope to reference the newly
+    //private RelativeLayout someView; // Will be used as a global scope to reference the newly
                                      // initialized object, which will be added to an ArrayList of
                                      // RelativeLayout, representing ImageView "holding" a
                                      // check box.
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     public RelativeLayout toRelativeLayout(){
         RelativeLayout someView = (RelativeLayout) inflater.inflate(R.layout.image_and_stuff, null);
         view = (ImageView) someView.getChildAt(0);
-        checkBox = (CheckBox) someView.getChildAt(1);
+        final CheckBox checkBox = (CheckBox) someView.getChildAt(1);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -67,9 +67,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public RelativeLayout toRelativeLayoutSecond(){
-        someView = (RelativeLayout) inflater.inflate(R.layout.image_and_stuff, null);
-        view = (ImageView) someView.getChildAt(0);
-        checkBox = (CheckBox) someView.getChildAt(1);
+        RelativeLayout someView = (RelativeLayout) inflater.inflate(R.layout.image_and_stuff, null);
+        ImageView view = (ImageView) someView.getChildAt(0);
+        final CheckBox checkBox = (CheckBox) someView.getChildAt(1);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
