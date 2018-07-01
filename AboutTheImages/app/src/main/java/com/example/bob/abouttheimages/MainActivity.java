@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         inflater = LayoutInflater.from(getApplicationContext());
         roll.addView(toRelativeLayout());
         roll.addView(toRelativeLayoutSecond());
+        roll.addView(toRelativeLayoutThird());
+        roll.addView(toRelativeLayoutFourth());
     }
 
     // A new technique? Well, I could make an object which holds ImageView and CheckBox, where
@@ -83,6 +85,46 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         view.setImageDrawable(listOfImgs.get(1));
+        return someView;
+    }
+
+    public RelativeLayout toRelativeLayoutThird(){
+        RelativeLayout someView = (RelativeLayout) inflater.inflate(R.layout.image_and_stuff, null);
+        ImageView view = (ImageView) someView.getChildAt(0);
+        final CheckBox checkBox = (CheckBox) someView.getChildAt(1);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(v.isSelected() == false){
+                    v.setSelected(true);
+                    checkBox.setChecked(true);
+                }else if(v.isSelected() == true){
+                    v.setSelected(false);
+                    checkBox.setChecked(false);
+                }
+            }
+        });
+        view.setImageDrawable(listOfImgs.get(2));
+        return someView;
+    }
+
+    public RelativeLayout toRelativeLayoutFourth(){
+        RelativeLayout someView = (RelativeLayout) inflater.inflate(R.layout.image_and_stuff, null);
+        ImageView view = (ImageView) someView.getChildAt(0);
+        final CheckBox checkBox = (CheckBox) someView.getChildAt(1);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(v.isSelected() == false){
+                    v.setSelected(true);
+                    checkBox.setChecked(true);
+                }else if(v.isSelected() == true){
+                    v.setSelected(false);
+                    checkBox.setChecked(false);
+                }
+            }
+        });
+        view.setImageDrawable(listOfImgs.get(3));
         return someView;
     }
 
