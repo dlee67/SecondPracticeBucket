@@ -5,7 +5,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import java.util.ArrayList;
 
@@ -13,48 +18,58 @@ import static com.example.bob.abouttheimages.R.drawable.cave_one;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ArrayList<ImageView> listOfImgs;
+    private ArrayList<Drawable> listOfImgs = new ArrayList<Drawable>();
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private LinearLayout roll;
+    private LayoutInflater inflater;
+    private RelativeLayout someView; // Will be used as a global scope to reference the newly
+                                     // initialized object, which will be added to an ArrayList of
+                                     // RelativeLayout, representing ImageView "holding" a
+                                     // check box.
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initPictures();
+        roll = findViewById(R.id.imgs);
+        inflater = LayoutInflater.from(getApplicationContext());
+        toRelativeLayout();
+    }
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
+    public void toRelativeLayout(){
+        someView = (RelativeLayout) inflater.inflate(R.layout.image_and_stuff, null);
+        ImageView view = (ImageView) someView.getChildAt(0);
+        CheckBox checkBox = (CheckBox) someView.getChildAt(1);
+        view.setImageDrawable(listOfImgs.get(0));
+        roll.addView(someView);
+    }
 
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
-
-        // use a linear layout manager
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
+    protected void initPictures(){
         Drawable imgOne = getResources().getDrawable(R.drawable.cave_one);
-        ImageView actualOne = new ImageView(this);
-        actualOne.setImageDrawable(imgOne);
-        listOfImgs.add(actualOne);
+        listOfImgs.add(imgOne);
+        //ImageView actualOne = new ImageView(this);
+        //actualOne.setImageDrawable(imgOne);
+        //listOfImgs.add(actualOne);
 
         Drawable imgTwo = getResources().getDrawable(R.drawable.deep_sea);
-        ImageView actualTwo = new ImageView(this);
-        actualTwo.setImageDrawable(imgTwo);
-        listOfImgs.add(actualTwo);
+        listOfImgs.add(imgTwo);
+        //ImageView actualTwo = new ImageView(this);
+        //actualTwo.setImageDrawable(imgTwo);
+        //listOfImgs.add(actualTwo);
 
         Drawable imgThree = getResources().getDrawable(R.drawable.floating_city);
-        ImageView actualThree = new ImageView(this);
-        actualThree.setImageDrawable(imgThree);
-        listOfImgs.add(actualThree);
+        listOfImgs.add(imgThree);
+        //ImageView actualThree = new ImageView(this);
+        //actualThree.setImageDrawable(imgThree);
+        //listOfImgs.add(actualThree);
 
         Drawable imgFour = getResources().getDrawable(R.drawable.space_one);
-        ImageView actualFour = new ImageView(this);
-        actualFour.setImageDrawable(imgFour);
-        listOfImgs.add(actualThree);
-
-        // specify an adapter (see also next example)
-        mAdapter = new MyAdapter(listOfImgs);
-        mRecyclerView.setAdapter(mAdapter);
+        listOfImgs.add(imgFour);
+        //ImageView actualFour = new ImageView(this);
+        //actualFour.setImageDrawable(imgFour);
+        //listOfImgs.add(actualThree);
     }
 }
