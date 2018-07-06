@@ -1,6 +1,7 @@
 package com.example.bob.abouttheservice;
 
 import android.app.IntentService;
+import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
@@ -9,36 +10,18 @@ import android.widget.Toast;
 
 import static android.widget.Toast.*;
 
-public class SomeService extends IntentService {
-
-    public SomeService(){
-        super("AHH!");
-    }
-
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
-     * @param name Used to name the worker thread, important only for debugging.
-     */
-    public SomeService(String name) {
-        super(name);
-    }
+public class SomeService extends Service {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         makeText(this, "I will name your character AH AH AH AH AH!",
                 LENGTH_SHORT).show();
+        new MyAsyncTask().execute(); //Will invoke the doInBackground().
         return super.onStartCommand(intent, flags, startId);
     }
 
     public IBinder onBind(Intent intent){
         return null; //If the onBind() is not returning null, then Service not truly a
                      //background Service.
-    }
-
-    @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
-        makeText(getApplicationContext(), "AAAAAAAAAAAAAAAAAAAAAAAAAAAAHHH!", LENGTH_SHORT)
-                .show();
     }
 
     @Override
@@ -63,8 +46,9 @@ public class SomeService extends IntentService {
                 //UI Thread.
                 //https://developer.android.com/reference/android/os/AsyncTask#publishProgress(Progress...)
                 publishProgress("Time elapsed " + counter);
+                counter++;
                 try{
-                    Thread.sleep(12000);
+                    Thread.sleep(1000);
                 }catch(InterruptedException e){
                     e.printStackTrace();
                 }
@@ -79,11 +63,5 @@ public class SomeService extends IntentService {
             super.onProgressUpdate(progress);
             Toast.makeText(SomeService.this, progress[0], Toast.LENGTH_LONG).show();
         }
-
-        /*
-        protected void onPostExecute(Long result) {
-            showDialog("Downloaded " + result + " bytes");
-        }
-        */
     }
 }

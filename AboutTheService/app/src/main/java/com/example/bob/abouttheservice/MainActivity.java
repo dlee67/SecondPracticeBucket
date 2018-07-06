@@ -15,12 +15,16 @@ public class MainActivity extends AppCompatActivity {
 
     protected void startService(View view){
         Intent intent = new Intent(this, SomeService.class);
-        startService(intent);
+        startService(intent); //Invokes onStartCommand() on a Main Thread.
     }
 
-    //Invokes the onDestroy() of the Service object.
     protected void stopService(View view){
         Intent intent = new Intent(this, SomeService.class);
-        stopService(intent);
+        stopService(intent); // Invokes the onDestroy() of the Service object.
+    }
+
+    protected void startIntentService(View view){
+        Intent intent = new Intent(this, SomeIntentService.class);
+        startService(intent);
     }
 }
