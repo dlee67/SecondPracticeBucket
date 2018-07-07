@@ -21,4 +21,10 @@ public class SomeIntentService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
 
     }
+
+    //This function is automatically called after the onHandleIntent's operation is finished.
+    @Override
+    public void onDestroy(){
+        Log.d("dhl", "Finishing up the service.");
+    }
 }
