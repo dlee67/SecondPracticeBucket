@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     EditText whyThough;
 
     @Override
+    //Referred: https://stackoverflow.com/questions/31378621/keylistener-on-edittext-android
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -41,12 +42,13 @@ public class MainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 if(s != null && s.length() > 0 && s.charAt(s.length() - 1) == '\n'){
                     //dp something
-                    hideKeyboardFrom(getApplicationContext(), whyThough);   
+                    hideKeyboardFrom(getApplicationContext(), whyThough);
                 }
             }
         });
     }
 
+    //Referred: https://stackoverflow.com/questions/1109022/close-hide-the-android-soft-keyboard
     public static void hideKeyboardFrom(Context context, View view) {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
