@@ -3,6 +3,7 @@ package com.example.bob.abouttheservice;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,5 +27,14 @@ public class MainActivity extends AppCompatActivity {
     protected void startIntentService(View view){
         Intent intent = new Intent(this, SomeIntentService.class);
         startService(intent);
+    }
+
+    protected void startActivityWithout(View view){
+        try {
+            Intent intent = new Intent(this, ActivityWithoutView.class);
+            startActivity(intent);
+        } catch (Exception e){
+            Log.d("dhl", String.valueOf(e));
+        }
     }
 }
