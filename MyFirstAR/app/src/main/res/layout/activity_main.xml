@@ -6,9 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <fragment android:name="com.google.ar.sceneform.ux.ArFragment"
-        android:id="@+id/ux_fragment"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="5">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4">
+            <fragment android:name="com.google.ar.sceneform.ux.ArFragment"
+                android:id="@+id/ux_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            <EditText
+                android:id="@+id/keyboardInput"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Say something"
+                android:inputType="textMultiLine"/>
+        </FrameLayout>
+    </LinearLayout>
 </FrameLayout>

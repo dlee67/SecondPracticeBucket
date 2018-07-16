@@ -9,10 +9,14 @@ import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import com.google.ar.core.Anchor;
@@ -21,56 +25,69 @@ import com.google.ar.core.Plane;
 import com.google.ar.core.Trackable;
 import com.google.ar.sceneform.AnchorNode;
 import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.rendering.Renderable;
 import com.google.ar.sceneform.rendering.ViewRenderable;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final double MIN_OPENGL_VERSION = 3.1;
-    ViewRenderable testViewRenderable;
+    ViewRenderable viewRenderableFactory; //CompletableFuture<ViewRenderable> viewRenderable;
+    HashMap<Anchor, EditText> edtTxtFinder = new HashMap<Anchor, EditText>();
+    EditText keyboard;
+    EditText focusedEditText;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if (!checkIsSupportedDeviceOrFinish(this)) {
             return;
         }
-
         setContentView(R.layout.activity_main);
 
-        ImageView myImageView = new ImageView(this);
-        myImageView.findViewById(R.id.myImageView);
-        Log.i("dhl", "myImageView is: " + myImageView);
-        myImageView.setImageResource(R.drawable.unicorn_emplem);
+        keyboard = findViewById(R.id.keyboardInput);
+        keyboard.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Log.i("dhl", "In beforeTextChanged.");
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.i("dhl", "In onTextChanged.");
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.i("dhl", "In the afterTextChanged");
+                if(s != null && s.length() > 0 && s.charAt(s.length() - 1) == '\n'){
+                    //dp something
+                    try {
+                        focusedEditText.setText(keyboard.getText().toString());
+                        keyboard.setText("");
+                    } catch (Exception e){
+                        Log.d("dhl", e.toString());
+                    }
+                }
+            }
+        });
 
         ArFragment arFragment = (ArFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.ux_fragment);
 
-        ViewRenderable.builder()
-                .setView(getApplicationContext(), myImageView)
-                .build()
-                .thenAccept(renderable -> testViewRenderable = renderable)
-                .exceptionally(
-                throwable -> {
-                    Toast toast =
-                            Toast.makeText(this, "Unable the view renderable", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                    return null;
-                });
-
         arFragment.setOnTapArPlaneListener(
                 (HitResult hitResult, Plane plane, MotionEvent motionEvent) -> {
-                    if (testViewRenderable == null) {
-                        return;
-                    }
 
+                    //Grabs all the anchors from the given plane,
                     if(!plane.getAnchors().isEmpty()){
                         Collection<Anchor> anchors = plane.getAnchors();
+                        //and detaches them, making'em disappear from the Scene.
                         for(Anchor anchor : anchors){
                             anchor.detach();
                         }
@@ -82,12 +99,38 @@ public class MainActivity extends AppCompatActivity {
                     AnchorNode anchorNode = new AnchorNode(anchor);
                     anchorNode.setParent(arFragment.getArSceneView().getScene());
 
+                    //Will have to generate an EditText renderable here at this moment.
+                    EditText newEdtTxtView = createEditText();
+                    newEdtTxtView.setOnTouchListener(new View.OnTouchListener() {
+                        @Override
+                        public boolean onTouch(View v, MotionEvent event) {
+                            focusedEditText = (EditText)v;
+                            return false;
+                        }
+                    });
+                    ViewRenderable.builder()
+                            .setView(this, newEdtTxtView)
+                            .build().thenAccept(renderable -> viewRenderableFactory = renderable);
+
                     // Create the transformable andy and add it to the anchor.
                     TransformableNode saiyan = new TransformableNode(arFragment.getTransformationSystem());
                     saiyan.setParent(anchorNode);
-                    saiyan.setRenderable(testViewRenderable);
+                    saiyan.setRenderable(viewRenderableFactory);
                     saiyan.select();
+
+                    edtTxtFinder.put(anchor, newEdtTxtView);
+
+                    if (viewRenderableFactory == null) {
+                        return;
+                    }
                 });
+    }
+
+    public EditText createEditText(){
+        Log.i("dhl", "");
+        EditText newEditText = (EditText) getLayoutInflater().inflate(R.layout.my_renderable, null);;
+        newEditText.setText("Empty TextView");
+        return newEditText;
     }
 
     public static boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
@@ -110,4 +153,5 @@ public class MainActivity extends AppCompatActivity {
         }
         return true;
     }
+
 }
