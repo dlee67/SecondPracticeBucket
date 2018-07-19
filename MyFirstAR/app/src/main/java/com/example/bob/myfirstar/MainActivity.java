@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     HashMap<Anchor, EditText> edtTxtFinder = new HashMap<Anchor, EditText>();
     EditText keyboard;
     EditText focusedEditText;
+    EditText newEdtTxtView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,19 +89,14 @@ public class MainActivity extends AppCompatActivity {
                     if(!plane.getAnchors().isEmpty()){
                         Collection<Anchor> anchors = plane.getAnchors();
                         //and detaches them, making'em disappear from the Scene.
-                        for(Anchor anchor : anchors){
-                            anchor.detach();
+                        for(Anchor anchorOnPlane : anchors){
+                            anchorOnPlane.detach();
                         }
                         return;
                     }
 
-                    // Create the Anchor.
-                    Anchor anchor = hitResult.createAnchor();
-                    AnchorNode anchorNode = new AnchorNode(anchor);
-                    anchorNode.setParent(arFragment.getArSceneView().getScene());
-
                     //Will have to generate an EditText renderable here at this moment.
-                    EditText newEdtTxtView = createEditText();
+                    newEdtTxtView = createEditText();
                     newEdtTxtView.setOnTouchListener(new View.OnTouchListener() {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
@@ -112,7 +108,12 @@ public class MainActivity extends AppCompatActivity {
                             .setView(this, newEdtTxtView)
                             .build().thenAccept(renderable -> viewRenderableFactory = renderable);
 
-                    // Create the transformable andy and add it to the anchor.
+                    // Create the Anchor.
+                    Anchor anchor = hitResult.createAnchor();
+                    AnchorNode anchorNode = new AnchorNode(anchor);
+                    anchorNode.setParent(arFragment.getArSceneView().getScene());
+
+                    // Create the transformable ViewRederable and add it to the anchor.
                     TransformableNode saiyan = new TransformableNode(arFragment.getTransformationSystem());
                     saiyan.setParent(anchorNode);
                     saiyan.setRenderable(viewRenderableFactory);
