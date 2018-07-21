@@ -101,9 +101,12 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public boolean onTouch(View v, MotionEvent event) {
                             focusedEditText = (EditText)v;
-                            return false;
+                            return true;
                         }
                     });
+
+                    //The EditText view might be not showing immediately because builder()
+                    //runs asynchrounously.
                     ViewRenderable.builder()
                             .setView(this, newEdtTxtView)
                             .build().thenAccept(renderable -> viewRenderableFactory = renderable);
