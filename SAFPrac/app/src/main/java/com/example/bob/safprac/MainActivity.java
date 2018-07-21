@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 
 import static android.support.v4.provider.DocumentFile.fromTreeUri;
@@ -39,10 +40,23 @@ public class MainActivity extends AppCompatActivity {
             getContentResolver().takePersistableUriPermission(data.getData(),
                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
-        doSomething();
+        writeToTextFile();
     }
 
-    public void doSomething(){
+    /*
+        Problem at the moment is to finguring out a way to write things to my text file,
+        it seems like that entire operation needs to be done via through ContentProvider
+        and document provider, DoncumentFile itself doesn't have enough power to
+        write things to anything.
+
+        The class ContentResolver seems to hold the most water for me at the moment.
+        It has a method like openInputStream() and openOutputStream().
+
+        In fact:
+        https://stackoverflow.com/questions/42043114/how-to-write-to-documentfile-in-android-programmatically
+        that seems to be the most pragmatic choice at the moment.
+     */
+    public void writeToTextFile(){
         Log.i("dhl", "Current Uri can: " + treeUri.canRead());
         Log.i("dhl", "Current Uri can: " + treeUri.canWrite());
         treeUri.createFile("text/plain", "some_text.txt");
