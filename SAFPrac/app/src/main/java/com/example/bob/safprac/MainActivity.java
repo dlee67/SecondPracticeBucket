@@ -4,15 +4,19 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
+import android.support.v4.provider.DocumentFile;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
 import java.io.FileNotFoundException;
 
+import static android.support.v4.provider.DocumentFile.fromTreeUri;
+
 public class MainActivity extends AppCompatActivity {
 
     final int READ_REQUEST_CODE = 777;
+    DocumentFile treeUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult (int requestCode, int resultCode, Intent data){
+        treeUri = fromTreeUri(this, data.getData());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             grantUriPermission(this.getPackageName(), data.getData(),
                     Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
@@ -34,20 +39,13 @@ public class MainActivity extends AppCompatActivity {
             getContentResolver().takePersistableUriPermission(data.getData(),
                     Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
         }
-        doSomething(data.getData()); //SAF is async; therefore, mutual recursion is necessary.
+        doSomething();
     }
 
-    public void doSomething(Uri baseUri){
-        Log.i("dhl", "Current base Uri: " + baseUri.getPath());
-        Uri toSomeFolder = baseUri.withAppendedPath(baseUri, "/some_folder");
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                try {
-                    DocumentsContract.createDocument(getContentResolver(), toSomeFolder,
-                            "text/plain", "some_text.txt");
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
+    public void doSomething(){
+        Log.i("dhl", "Current Uri can: " + treeUri.canRead());
+        Log.i("dhl", "Current Uri can: " + treeUri.canWrite());
+        treeUri.createFile("text/plain", "some_text.txt");
     }
 
 }
