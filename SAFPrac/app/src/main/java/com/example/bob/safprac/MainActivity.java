@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.provider.DocumentFile;
@@ -16,6 +15,7 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     DocumentFile usbRoot; // DocumentFile is not an Uri.
     String[] listOfFiles;
     File imagesDir;
+    File[] images;
     ArrayList<Uri> listOfImagesUri = new ArrayList<Uri>();
 
     @Override
@@ -47,31 +48,37 @@ public class MainActivity extends AppCompatActivity {
                 onRequestPermission() will be invoked non-the less, but will fail the
                 condition checking for immediately because dialog is what's returning
                 the permission granted.
+
+                https://productforums.google.com/forum/#!topic/phone-by-google/2QWiNZehcBY
+                The later problem I've encountered was that /Pictures was already empty.
+                Pixel automatically saves every pictures in this thing called Google photo...
+                and moving around pictures requires File explorer.
              */
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     READ_REQUEST_CODE);
         } else{
             populateImages();
-        }
 
-        //Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-        //intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        //intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        //startActivityForResult(intent, READ_REQUEST_CODE);
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            startActivityForResult(intent, READ_REQUEST_CODE);
+        }
     }
 
     public void populateImages(){
         imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
         Log.i("dhl", "Fetching directory: " + imagesDir.getAbsolutePath());
         listOfFiles = imagesDir.list();
+
         if(listOfFiles == null){
             Log.i("dhl", "List of files are null. Returning out of the method.");
             return;
         }
-        Log.i("dhl", "List of dirs are.");
-        for (String str : listOfFiles){
-            Log.i("dhl", str);
+
+        for(File str : images) {
+            listOfImagesUri.add(Uri.fromFile(str));
         }
     }
 
@@ -120,6 +127,23 @@ public class MainActivity extends AppCompatActivity {
         pw.close();
     }
 
+    //I have to film a Shaolin movie with DocumentFile with this one.
+    public void writeImageFiles(){
+
+        //ArrayList<OutputStream> listOfOutputStream = new ArrayList<OutputStream>();
+        for(int counter = 0; counter < listOfImagesUri.size(); counter++){
+            try {
+                //I have to be clever about the below, and somehow chuck in ImageFiles
+                //into the USB.
+                getContentResolver().openOutputStream(listOfImagesUri.get(counter));
+            } catch (FileNotFoundException e) {
+                Log.i("dhl", e.toString());
+                return;
+            }
+        }
+
+    }
+
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         Log.i("dhl", "In the block of code for onRequestPermission.");
@@ -138,9 +162,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
         }
     }
 }
