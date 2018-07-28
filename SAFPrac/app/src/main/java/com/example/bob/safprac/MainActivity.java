@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        pw.write("In regards to institution we criticize.");
+        pw.write("In regards to the institution we criticize.");
 //https://stackoverflow.com/questions/42043114/how-to-write-to-documentfile-in-android-programmatically
         pw.flush();
         pw.close();
