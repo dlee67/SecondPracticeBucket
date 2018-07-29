@@ -1,3 +1,16 @@
+/*
+    Links used at the moment:
+    https://developer.android.com/reference/android/support/v4/provider/DocumentFile
+    https://developer.android.com/reference/android/provider/DocumentsProvider
+    https://developer.android.com/reference/android/content/ContentResolver
+    https://stackoverflow.com/questions/559902/android-how-can-i-convert-android-net-uri-object-to-java-net-uri-object
+    https://docs.oracle.com/javase/7/docs/api/java/nio/file/FileSystem.html
+    https://docs.oracle.com/javase/7/docs/api/java/nio/file/FileSystems.html#getFileSystem(java.net.URI)
+    https://docs.oracle.com/javase/7/docs/api/java/nio/file/Path.html
+    https://docs.oracle.com/javase/7/docs/api/java/io/File.html
+    https://docs.oracle.com/javase/7/docs/api/java/nio/file/Files.html
+    https://docs.oracle.com/javase/7/docs/technotes/guides/io/fsp/zipfilesystemprovider.html
+ */
 package com.example.bob.safprac;
 
 import android.Manifest;
