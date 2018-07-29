@@ -3,9 +3,6 @@ package com.example.bob.safprac;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.provider.DocumentFile;
@@ -13,26 +10,25 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
+import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 
-import static android.support.v4.provider.DocumentFile.fromTreeUri;
+import static android.support.v4.provider.DocumentFile.fromSingleUri;
 
 public class MainActivity extends AppCompatActivity {
 
-    final int READ_REQUEST_CODE = 1;
+    final int READ_REQUEST_CODE = 2;
+    final int CREATE_ZIP = 0;
+    DocumentFile zipFile;
     DocumentFile usbRoot; // DocumentFile is not an Uri.
-    String[] listOfFiles;
-    File imagesDir;
-    File[] images;
-    ArrayList<Uri> listOfImagesUri = new ArrayList<Uri>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,137 +56,60 @@ public class MainActivity extends AppCompatActivity {
              */
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    READ_REQUEST_CODE);
+                    CREATE_ZIP);
         } else{
-            populateImages();
 
-            //Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            intent.setType("*/*");
+            Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+            intent.setType("application/zip");
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            startActivityForResult(intent, READ_REQUEST_CODE);
-            //startActivityForResult(intent, READ_REQUEST_CODE);
-        }
-    }
+            startActivityForResult(intent, CREATE_ZIP);
 
-    public void populateImages(){
-        imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-        Log.i("dhl", "Fetching directory: " + imagesDir.getAbsolutePath());
-        listOfFiles = imagesDir.list();
-        if(listOfFiles == null){
-            Log.i("dhl", "List of files are null. Returning out of the method.");
-            return;
-        }
-
-        images = imagesDir.listFiles();
-        for(File str : images) {
-            listOfImagesUri.add(Uri.fromFile(str));
         }
     }
 
     @Override
     protected void onActivityResult (int requestCode, int resultCode, Intent data){
-        //usbRoot = fromTreeUri(this, data.getData());
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            grantUriPermission(this.getPackageName(), data.getData(),
-                    Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
-            getContentResolver().takePersistableUriPermission(data.getData(),
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            getContentResolver().takePersistableUriPermission(data.getData(),
-                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        if(requestCode == CREATE_ZIP){
+            Log.i("dhl", "Creating zip archive.");
+            zipFile = fromSingleUri(this, data.getData());
+            appendFileToZip();
         }
-
-        PrintWriter pw = null;
-        //Create an output stream, which writes text files.
-        try {
-            Log.i("dhl", "Carrying out the alternative.");
-            pw = new PrintWriter(getContentResolver()
-                    .openOutputStream
-                    //(baseUri.withAppendedPath(baseUri, "some_text.txt")));
-                            (data.getData()));
-        } catch (Exception e) {
-            Log.i("dhl", e.toString());
-            return;
-        }
-
-        pw.write("In regards to the institution we criticize.");
-//https://stackoverflow.com/questions/42043114/how-to-write-to-documentfile-in-android-programmatically
-        pw.flush();
-        pw.close();
-
-        //Log.i("dhl", "Calling writeToTextFile()");
-        //writeToTextFile();
-        //writeImageFiles();
     }
 
-    /*
-        Problem at the moment is to finguring out a way to write things to my text file,
-        it seems like that entire operation needs to be done via through ContentProvider
-        and document provider, DoncumentFile itself doesn't have enough power to
-        write things to anything.
-
-        The class ContentResolver seems to hold the most water for me at the moment.
-        It has a method like openInputStream() and openOutputStream().
-
-        In fact:
-        https://stackoverflow.com/questions/42043114/how-to-write-to-documentfile-in-android-programmatically
-        that seems to be the most pragmatic choice at the moment.
-     */
-    public void writeToTextFile(){
-        Log.i("dhl", "Current Uri can: " + usbRoot.canRead());
-        Log.i("dhl", "Current Uri can: " + usbRoot.canWrite());
-        Uri baseUri = usbRoot.getUri();
-        Log.i("dhl", "Uri of the usbRoot at the moment: " + usbRoot.getUri().getPath());
-        usbRoot.createFile("text/plain", "some_text.txt");
-        DocumentFile textFileInSomeFolder = usbRoot.listFiles()[0];
-        PrintWriter pw = null;
-        //Create an output stream, which writes text files.
+    protected void appendFileToZip(){
+        BufferedInputStream bis = null;
         try {
-            pw = new PrintWriter(getContentResolver()
-                    .openOutputStream
-                            //(baseUri.withAppendedPath(baseUri, "some_text.txt")));
-                                    (textFileInSomeFolder.getUri()));
-        } catch (Exception e) {
-            Log.i("dhl", e.toString());
-            return;
-        }
-        pw.write("In regards to institution we criticize.");
-//https://stackoverflow.com/questions/42043114/how-to-write-to-documentfile-in-android-programmatically
-        pw.flush();
-        pw.close();
-    }
-
-    //I have to film a Shaolin movie with DocumentFile with this one.
-    public void writeImageFiles() {
-        //If the usbRoot doesn't have an Uri path to the ./bug_report, then make it so.
-        //Uri imgDirUri = Uri.withAppendedPath(usbRoot.getUri(), "./bug_report");
-        try {
-            /*
-            Just like the things I've learned about in the OS course, the below block of code
-            should be able to stream the data from the intended directory from OutPutStream
-            to InputStream.
-             */
-            usbRoot.createFile("image/png", "some_image");
-            Uri uriToImg = Uri.withAppendedPath(usbRoot.getUri(), "some_image.png");
-            Log.i("dhl", "uriToImg's uri is: " + uriToImg.getPath());
-            OutputStream out = getContentResolver().openOutputStream(uriToImg);
-            InputStream in = getContentResolver().openInputStream(listOfImagesUri.get(0)); //Grabs the very first element of the listOfImagesUri.
-            Log.i("dhl", "From listOfImagesUri: " + listOfImagesUri.get(0).toString());
-            byte[] buffers = new byte[1024];
-            int read = 0;
-            while((read = in.read(buffers)) != -1){
-                out.write(buffers, 0, read);
+            //URI javaURI = new URI(zipFile.getUri().toString());
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                //FileSystem fs = FileSystems.getFileSystem(javaURI);
+                File newFile = File.createTempFile("title_and_desc", ".txt");
+                PrintWriter pw = new PrintWriter(newFile);
+                pw.write("Regarding institution we criticize.");
+                pw.close();
+                Path appendThis = newFile.toPath();
+                Files.copy(appendThis, getContentResolver().openOutputStream(zipFile.getUri()));
             }
-        } catch (FileNotFoundException e) {
-            Log.i("dhl", e.toString());
-            return;
+            /*
+                ZipOutputStream zipDest = new ZipOutputStream(getContentResolver().openOutputStream(zipFile.getUri()));
+                zipDest.setLevel(0);
+                byte[] buffer = new byte[1024];
+                File newFile = File.createTempFile("title_and_desc", ".txt");
+                FileInputStream newFileInputStream = new FileInputStream(newFile);
+                BufferedInputStream bufferedInputStream = new BufferedInputStream(newFileInputStream);
+                ZipEntry zipEntry = new ZipEntry("title_and_description");
+                zipDest.putNextEntry(zipEntry);
+                int count = 0;
+                while((count = bufferedInputStream.read(buffer, 0, 1024)) != -1){
+                    zipDest.write(buffer, 0, count);
+                }
+                bufferedInputStream.close();
+                zipDest.close();
+            */
         } catch (IOException e) {
+            e.printStackTrace();
             Log.i("dhl", e.toString());
-            return;
         }
-        //ArrayList<OutputStream> listOfOutputStream = new ArrayList<OutputStream>();
     }
 
     public void onRequestPermissionsResult(int requestCode,
@@ -201,9 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                    populateImages();
+                    Log.i("dhl", "Permission granted, please restart the application.");
                 } else {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
