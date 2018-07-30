@@ -23,9 +23,7 @@ public class SomeIntentService extends IntentService {
     protected void onHandleIntent(@Nullable Intent intent) {
         int counter = 0;
         while(counter < 10){
-            System.out.println(counter);
-            SystemClock.sleep(1000);
-            counter++;
+            SystemClock.sleep(5000);
         }
     }
 
