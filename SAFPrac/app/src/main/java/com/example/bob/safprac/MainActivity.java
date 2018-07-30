@@ -16,6 +16,8 @@ package com.example.bob.safprac;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.provider.DocumentFile;
@@ -25,6 +27,8 @@ import android.util.Log;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URI;
@@ -33,6 +37,8 @@ import java.nio.file.Files;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static android.support.v4.provider.DocumentFile.fromSingleUri;
 
@@ -81,36 +87,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onActivityResult (int requestCode, int resultCode, Intent data){
         if(requestCode == CREATE_ZIP){
             Log.i("dhl", "Creating zip archive.");
             zipFile = fromSingleUri(this, data.getData());
-            appendFileToZip();
-        }
-    }
-
-    protected void appendFileToZip(){
-        BufferedInputStream bis = null;
-        try {
-            //URI javaURI = new URI(zipFile.getUri().toString());
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                //FileSystem fs = FileSystems.getFileSystem(javaURI);
-                File newFile = File.createTempFile("title_and_desc", ".txt");
-                PrintWriter pw = new PrintWriter(newFile);
-                pw.write("Regarding institution we criticize.");
-                pw.close();
-                Path appendThis = newFile.toPath();
-                Files.copy(appendThis, getContentResolver().openOutputStream(zipFile.getUri()));
-            }
-            /*
-                ZipOutputStream zipDest = new ZipOutputStream(getContentResolver().openOutputStream(zipFile.getUri()));
-                zipDest.setLevel(0);
+            try {
+                ZipOutputStream zipDest = new ZipOutputStream(getContentResolver().openOutputStream(data.getData()));
                 byte[] buffer = new byte[1024];
-                File newFile = File.createTempFile("title_and_desc", ".txt");
+                File newFile = File.createTempFile("MockFile", ".txt");
                 FileInputStream newFileInputStream = new FileInputStream(newFile);
                 BufferedInputStream bufferedInputStream = new BufferedInputStream(newFileInputStream);
-                ZipEntry zipEntry = new ZipEntry("title_and_description");
+                ZipEntry zipEntry = new ZipEntry("MockFile");
                 zipDest.putNextEntry(zipEntry);
                 int count = 0;
                 while((count = bufferedInputStream.read(buffer, 0, 1024)) != -1){
@@ -118,9 +107,34 @@ public class MainActivity extends AppCompatActivity {
                 }
                 bufferedInputStream.close();
                 zipDest.close();
-            */
+                Log.i("dhl", "Right before the invocation of appendFileToZip().");
+                appendFileToZip();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e){
+                Log.d("dhl", e.toString());
+            }
+        }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    public void appendFileToZip(){
+        Log.i("dhl", "In the block for appending Zip file.");
+        BufferedInputStream bis = null;
+        try {
+            File newFile = File.createTempFile("title_and_desc", ".txt");
+            PrintWriter pw = new PrintWriter(newFile);
+            pw.write("Regarding institution we criticize.");
+            pw.close();
+            Path appendThis = newFile.toPath();
+            Files.copy(appendThis, getContentResolver().openOutputStream(zipFile.getUri()));
+            Log.i("dhl", "Finished appending text file.");
         } catch (IOException e) {
             e.printStackTrace();
+            Log.i("dhl", e.toString());
+        } catch (Exception e){
             Log.i("dhl", e.toString());
         }
     }
