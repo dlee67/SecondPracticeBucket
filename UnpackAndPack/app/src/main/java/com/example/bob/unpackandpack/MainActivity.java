@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -22,6 +23,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -106,25 +108,32 @@ public class MainActivity extends AppCompatActivity {
     public void unpackZip(){
         Log.i("dhl", "In the block of unpackZip().");
         try {
+            DocumentFile zipFile = usbRootUri.findFile("ZipThis.zip");
             byte[] buffer = new byte[1024];
-            ZipInputStream zis = new ZipInputStream(getContentResolver().openInputStream(zipFile.getUri()));
-            ZipEntry zipEntry = zis.getNextEntry();
-            while(zipEntry != null){
-                String fileName = zipEntry.getName();
-                //File newFile = new File("unzipTest/" + fileName);
-                //FileOutputStream fos = new FileOutputStream(newFile);
-                Log.i("dhl", "Getting zip entry: " + zipEntry.getName());
-                OutputStream fos = getContentResolver()
-                        .openOutputStream(usbRootUri.createFile("*/*", zipEntry.getName()).getUri());
-                int len;
-                while ((len = zis.read(buffer)) > 0) {
-                    fos.write(buffer, 0, len);
+            ZipInputStream zipIn = new ZipInputStream(getContentResolver().openInputStream(zipFile.getUri()));
+            ZipEntry entry = zipIn.getNextEntry();
+            while(entry != null){
+                String fileName = entry.getName();
+                Log.i("dhl", "Getting zip entry: " + entry.getName());
+                // iterates over entries in the zip file
+                while (entry != null) {
+                    if (!entry.isDirectory()) {
+                    // if the entry is a file, extracts it
+                    OutputStream out = getContentResolver()
+                            .openOutputStream(usbRootUri.createFile("*/*", entry.getName()).getUri());
+                    extractFile(zipIn, out);
+                    } else {
+                        // if the entry is a directory, make the directory
+                        //File dir = new File(filePath);
+                        usbRootUri.createDirectory(entry.getName());
+                    }
+                    zipIn.closeEntry();
+                    entry = zipIn.getNextEntry();
                 }
-                fos.close();
-                zipEntry = zis.getNextEntry();
+                zipIn.closeEntry();
+                entry = zipIn.getNextEntry();
             }
-            zis.closeEntry();
-            zis.close();
+            zipIn.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -132,6 +141,16 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e){
             Log.d("dhl", e.toString());
         }
+    }
+
+    private void extractFile(ZipInputStream zipIn, OutputStream out) throws IOException {
+        BufferedOutputStream bos = new BufferedOutputStream(out);
+        byte[] bytesIn = new byte[1024];
+        int read = 0;
+        while ((read = zipIn.read(bytesIn)) != -1) {
+            bos.write(bytesIn, 0, read);
+        }
+        bos.close();
     }
 
     public void onRequestPermissionsResult(int requestCode,
