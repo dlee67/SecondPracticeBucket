@@ -12,10 +12,19 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver
+            android:name=".SomeThing$ForService"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="AH!"/>
+            </intent-filter>
+        </receiver>
+        <service
+            android:name=".SomethingWithService">
+        </service>
     </application>
 
 </manifest>
