@@ -1,3 +1,5 @@
+//The below implementation has it's limitation, where all the class
+//which needs to call run() must be a subclass of Thread.
 import java.lang.Thread;
 
 //Referring Android Concurrency.
