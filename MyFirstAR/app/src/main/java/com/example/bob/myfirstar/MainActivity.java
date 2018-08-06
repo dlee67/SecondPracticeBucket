@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                         return;
                     }
 
-                    //Will have to generate an EditText renderable here at this moment.
+                    //Must generate newEdtTxtView here to uniquely assign listener to each new EditText.
                     newEdtTxtView = createEditText();
                     newEdtTxtView.setOnTouchListener(new View.OnTouchListener() {
                         @Override
@@ -107,9 +107,10 @@ public class MainActivity extends AppCompatActivity {
 
                     //The EditText view might be not showing immediately because builder()
                     //runs asynchrounously.
-                    ViewRenderable.builder()
+                    CompletableFuture<ViewRenderable> future = ViewRenderable.builder()
                             .setView(this, newEdtTxtView)
-                            .build().thenAccept(renderable -> viewRenderableFactory = renderable);
+                            .build();
+                    future.thenAccept(renderable -> viewRenderableFactory = renderable);
 
                     // Create the Anchor.
                     Anchor anchor = hitResult.createAnchor();
