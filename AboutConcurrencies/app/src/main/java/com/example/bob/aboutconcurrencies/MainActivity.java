@@ -34,8 +34,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
                 */
-                //But this does.
-                //Perhaps, I need to study the architecture of how Hanlder and Message works more?
+                //At the moment, here is my explanation why the below works, but above doesn't.
+                //Looper loops through MessageQueue infinitely to look for new Message,
+                //but only for the new Message.
                 for(int counter = 0; counter < 10; counter++) {
                     Message newMessage = null;
                     try {
