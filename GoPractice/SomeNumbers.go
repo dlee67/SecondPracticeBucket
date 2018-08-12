@@ -32,5 +32,49 @@ func main(){
    for c := 0; c <= 10; c++{
       fmt.Print(c, " ")
    }
-      fmt.Print("\n")
+   fmt.Print("\n")
+
+   saySomething()
+//Go compiler will not concatnate int and String like Java can.
+   fmt.Println("From getInt, I got: ", getInt())
+   fmt.Println("From getUintE, I got: ", getUintE())
+//Golang has this concept called Closure, where I could have function inside a function.
+//It's not an anonymous function, like Java has, because closure functions is not coupled
+//with things like interface.
+   fmt.Println(makeEvenGenerator())
+//If you want to be fancy about it, Go allows you to return the function
+//inside a function.
+//And recursion works pretty much the same.
+   fmt.Println(recurTillTen(0))
+}
+
+func saySomething(){
+   fmt.Println("I will say something.")
+}
+
+func getInt() int {
+   return 5
+}
+
+func getUintE() uint8{
+   return 100
+}
+
+func makeEvenGenerator() func() uint {
+    i := uint(0)
+    return func() (ret uint) {
+        ret = i
+        i += 2
+        return
+    }
+}
+
+//Type declarations are always after the variable.
+func recurTillTen(val int) int {
+   fmt.Println("Inside the recursion.")
+   val++;
+   if val != 10{
+      return recurTillTen(val)
+   }
+   return val
 }
