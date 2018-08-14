@@ -46,6 +46,11 @@ func main(){
 //inside a function.
 //And recursion works pretty much the same.
    fmt.Println(recurTillTen(0))
+
+   defer third() // It might seem like defer will obligate the function to be executed last in the lexical context.
+   first()
+   second()
+   combine() //But it seems like defer moves the function call to a special stack or some sort.
 }
 
 func saySomething(){
@@ -67,6 +72,24 @@ func makeEvenGenerator() func() uint {
         i += 2
         return
     }
+}
+
+func first(){
+   fmt.Println("This is first.")
+}
+
+func second(){
+   fmt.Println("This is second.")
+}
+
+func third(){
+   fmt.Println("This is third.")
+}
+
+func combine(){
+   defer third()
+   first()
+   second()
 }
 
 //Type declarations are always after the variable.
