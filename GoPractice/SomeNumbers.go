@@ -51,6 +51,9 @@ func main(){
    first()
    second()
    combine() //But it seems like defer moves the function call to a special stack or some sort.
+   //panicAndRecover()
+   //fmt.Println("This is Yang's magic!") //Will not be printed, it seems like, unless specified, the recover()
+                                          //progress the program counter further.   
 }
 
 func saySomething(){
@@ -90,6 +93,18 @@ func combine(){
    defer third()
    first()
    second()
+}
+
+func uselessPanicAndRecover(){ //Pretty useless function because panic immediately throws a run-time error, which immediately
+                              //halts the program.
+   panic("UWAAAAAAAA!!! WE ARE ALL GOING TO DIEEEEE!!!")
+   str := recover()
+   fmt.Println(str)
+}
+
+func panicAndRecover(){
+   defer fmt.Println(recover())
+   panic("Fire 3 shots at the traspassing ships and run away!")
 }
 
 //Type declarations are always after the variable.
