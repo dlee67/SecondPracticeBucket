@@ -6,11 +6,16 @@ import "fmt"
 func main(){
 
    var x int = 5 //Which is same as x := 5
+   var someNumber *int = new(int) //A way to make a point in GO is to use new keyword, which is a built in function in this case.
+
    passByValue(x)
    fmt.Println("Thus, x will still equal to: ", x)
    fmt.Println("However, Go provides pointers, which enhances the experience of programming/debugging concurrent programs!")
    passByReference(&x)
    fmt.Println("See?:", x)
+
+   setInt(someNumber) //Makes sense, the parameter of setInt is already *int.
+   fmt.Println(*someNumber)
 }
 
 func passByValue(x int){
@@ -20,4 +25,8 @@ func passByValue(x int){
 
 func passByReference(x *int){
    *x = 15
+}
+
+func setInt(y *int) {
+   *y = 10 //Dereference it again to mutate it.
 }
