@@ -3,6 +3,12 @@ package main
 
 import "fmt"
 
+type Student struct{
+   name string
+   GPA float32
+   age int
+}
+
 func main(){
 
    var x int = 5 //Which is same as x := 5
@@ -16,6 +22,11 @@ func main(){
 
    setInt(someNumber) //Makes sense, the parameter of setInt is already *int.
    fmt.Println(*someNumber)
+
+   var someStudent *Student = new(Student)
+   someStudent.name = "Lulz!"
+   someStudent.GPA = 9000.0
+   someStudent.age = 16
 }
 
 func passByValue(x int){
