@@ -12,6 +12,6 @@ public class ContentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                 Bundle savedInstance){
-        return inflater.inflate(R.layout.mainfrag, container, false);
+        return inflater.inflate(R.layout.mainfrag, container, false);   
     }
 }
