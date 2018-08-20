@@ -1,9 +1,16 @@
 package com.example.bob.aboutfragments;
 
+import android.annotation.SuppressLint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addAnother(){
-        CouldBeHereForever lol = new CouldBeHereForever();
+        RecyclerViewDemo lol = new RecyclerViewDemo();
         //fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.fragment_container, lol, "fragment_2");
         //fragmentTransaction.addToBackStack(null);
