@@ -7,16 +7,30 @@ import android.support.v4.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
 
+    //Lazy instantiation.
+    FragmentManager fragmentManager;
+    FragmentTransaction fragmentTransaction;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
         ExampleFragment exFrag = new ExampleFragment();
         fragmentTransaction.add(/*ViewGroup where the fragment should be placed.*/R.id.fragment_container,
                 /*Fragment itself.*/exFrag,
-                /*Set the tag, which could be used to find a fragment programmatically.*/ "a");
-        fragmentTransaction.commit();
+                /*Set the tag, which could be used to find a fragment programmatically.*/ "fragment_1");
+        addAnother();
+        //fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit(); //Transactions are not completed whatsoever, unless I invoke commit().
+    }
+
+    public void addAnother(){
+        CouldBeHereForever lol = new CouldBeHereForever();
+        //fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.fragment_container, lol, "fragment_2");
+        //fragmentTransaction.addToBackStack(null);
+        //fragmentTransaction.commit();
     }
 }
