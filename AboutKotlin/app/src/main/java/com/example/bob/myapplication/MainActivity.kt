@@ -12,6 +12,14 @@ class MainActivity : AppCompatActivity() {
         reference types.
 
         Ultimately, functions are types in Kotlin.
+
+        Compiled language, meaning, my program is translated into machine-language
+        instructions priori to execution by a special program.
+        The vice versa is the runtime.
+
+        When the errors are caught during the compile time, those errors are called "compiled time errors,"
+        Kotlin circumvents this issue by having nullables, where null-pointer exceptions are usually caught
+        during the run-time, and crashes the system more often than not.
      */
     val readOnlyValue: String = "READ_ONLY";
     var experiencePoint: Int = 7;
@@ -54,6 +62,17 @@ class MainActivity : AppCompatActivity() {
         //The book (Big Nerd Ranch Kotlin) states that the below is categorized underneath as
         //function inlining.
         thatTakesLambda(stringSomething)
+        Log.i("dhl", letExample("I should see this here."))
+        Log.i("dhl", letExample(null))
+
+        var thisString: String? = null
+        //checkNotNull(thisString) // checkNotNull() is an integrated function in the Kotlin.
+        var string_one: String = "lol"
+        var string_two: String = "lol"
+        if(string_one == string_two){
+            Log.i("dhl", "Strings can be compared via equal signs.")
+        }
+        secondLetExample()
 
     }
 
@@ -66,6 +85,9 @@ class MainActivity : AppCompatActivity() {
         Coming back to it again, they are actually called nullable.
         And the nullable is not a type or a definition or some sort,
         it's a declaration that "this particular variable can be null."
+
+        To go over it again, the question mark notation is me telling the compiler,
+        "I am allowing nulls to be passed here."
      */
     private fun withAnime (someString: String?): String? {
         if(someString == null){
@@ -116,4 +138,39 @@ class MainActivity : AppCompatActivity() {
         someThingFunction("Well,", " there's that.")
     }
 
+    //let keyword allows us to create our function scopes; however,
+    //in order to truly appreciate let, one needs to use it keyword with it...
+    private fun letExample(arg: String?): String{
+        return arg.let {
+            if(arg == null){
+                return "Default stuff"
+            }else{
+                return arg
+            }
+        }
+    }
+
+    private fun secondLetExample(){
+        /*
+            At least from the looks of things, the let keyword can only be used
+            next to a function parameter, where let immediately creates a lambda function
+            for the function let keyword is being used for.
+            Thus, enabling the user to immediately apply an operation to the element that's
+            returned from a function.
+
+            Like, the combination of using coalescing operator and the let keyword could
+            almost always the guarantee that certain elements will be not null.
+         */
+        var listOfNumbers = listOf(1, 2, 3, 4, 5).let{
+            for(element in it){
+                Log.i("dhl", "From secondLetExample: " + element)
+            }
+        }
+    }
+
+    //The coalescing operator is me telling compiler that,
+    //"hey, if the thing on the left is null, do the one on the right instead.
+    private fun coalescingOperator(arg: String?): String{
+        return arg ?: return "WOW"
+    }
 }
