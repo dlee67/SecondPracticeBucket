@@ -14,4 +14,9 @@ open class CPP(var _feature: String, var _difficulty: String) {
         Log.i("dhl", "The language's primary feature: " + feature)
         Log.i("dhl", "It was pretty: " + difficulty)
     }
+
+    open fun criticize(){
+        Log.i("dhl", "WHY IS IT SO HARD?!!?!! (too much complexities, " +
+                "requires much focus for the jumbles of notations)")
+    }
 }

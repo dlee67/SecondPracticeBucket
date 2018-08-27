@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
     var lolKotlin: Kotlin = Kotlin("Kotlin", 7)
     //var notSoLolKotlin: Kotlin = Kotlin("Java")
     var cPP: CPP = CPP("pointers", "difficult")
-    var java: Java =
+    var java: Java = Java("James Gosling")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +86,12 @@ class MainActivity : AppCompatActivity() {
         Log.i("dhl", lolKotlin.returnSomeString())
         //notSoLolKotlin.introduceYourself()
 
+        sayNiceThings(lolKotlin)
+        sayNiceThings(java)
+        sayNiceThings(cPP)
+
+        cPP.description()
+        java.description()
     }
 
     fun sum(a: Int, b: Int): Int /* Return type being the Int*/{
@@ -187,5 +193,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     //Any data type is nearly the same thing as Object data type.
-    fun sayNiceThings()
+    //Any data type could be treated as many things; for example,
+    //any as Java, or any as CPP, there are both valid.
+    fun sayNiceThings(any: Any?){
+        if(any is Java){
+            Log.i("dhl", "Verbose enough, fun to write with enough; also, prone to failure enough.")
+        }else if(any is CPP) {
+            Log.i("dhl", "Very, very powerful tool to use, can pretty much immitate what the programming realm can offer; however, TOO HARD TO USE!")
+        }else if(any is Kotlin){
+            Log.i("dhl", "Mends everything Java doesn't do well in. ")
+        }else{
+            Log.i("dhl", "Is this null?")
+        }
+    }
 }

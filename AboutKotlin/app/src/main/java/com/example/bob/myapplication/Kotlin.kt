@@ -47,5 +47,4 @@ class Kotlin (_name: String, _age: Int){
     }
 
     fun lazyExample(): String = "Counter intuitively, lazy initialization significantly improves your program's performance."
-
 }
