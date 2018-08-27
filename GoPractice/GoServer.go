@@ -30,6 +30,10 @@ import (
 /*
    func Marshal(v interface{}) ([]byte, error)
    The above function passes (v interface{}) and returns ([]byte, error).
+
+   It's great that I am motivated, but writing a Microservice seems to require a
+   bit more prowess in web-development with Go.
+   Perhaps, let's comeback after writing some descent programs in Kotlin?
 */
 //func main() {
 //    http.HandleFunc("/", handler)

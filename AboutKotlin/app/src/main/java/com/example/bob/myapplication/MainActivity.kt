@@ -20,6 +20,9 @@ class MainActivity : AppCompatActivity() {
         When the errors are caught during the compile time, those errors are called "compiled time errors,"
         Kotlin circumvents this issue by having nullables, where null-pointer exceptions are usually caught
         during the run-time, and crashes the system more often than not.
+
+        "A note about terminology: Technically, an object is instantiated when memory is allocated for it, and it is initialized when it is assigned a value. However, in practice the terms are often used slightly differently. Often, initialization is used to mean “everything required to make a variable, property, or class instance ready to use,” while instantiation tends to be limited to “creating an instance of a class.” In this book, we follow this more typical usage."
+        Did not know the above until now.
      */
     val readOnlyValue: String = "READ_ONLY";
     var experiencePoint: Int = 7;
@@ -29,6 +32,10 @@ class MainActivity : AppCompatActivity() {
     var toTen: Array<Int> = arrayOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10);
     //var someString: List = 3, 1, 2, 4;
     //var someMap: Map = "stuff" to 1;
+    var lolKotlin: Kotlin = Kotlin("Kotlin", 7)
+    //var notSoLolKotlin: Kotlin = Kotlin("Java")
+    var cPP: CPP = CPP("pointers", "difficult")
+    var java: Java =
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +80,11 @@ class MainActivity : AppCompatActivity() {
             Log.i("dhl", "Strings can be compared via equal signs.")
         }
         secondLetExample()
+        lolKotlin.introduceYourself()
+        //Apparently, Kotlin has setters and getters automatically;
+        //however, we are allowed to create our own custom getters.
+        Log.i("dhl", lolKotlin.returnSomeString())
+        //notSoLolKotlin.introduceYourself()
 
     }
 
@@ -173,4 +185,7 @@ class MainActivity : AppCompatActivity() {
     private fun coalescingOperator(arg: String?): String{
         return arg ?: return "WOW"
     }
+
+    //Any data type is nearly the same thing as Object data type.
+    fun sayNiceThings()
 }
