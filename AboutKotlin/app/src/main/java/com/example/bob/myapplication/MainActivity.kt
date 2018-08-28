@@ -92,6 +92,8 @@ class MainActivity : AppCompatActivity() {
 
         cPP.description()
         java.description()
+
+        Log.i("dhl", SomeThing.grabAString()) //Why not just use a design pattern?
     }
 
     fun sum(a: Int, b: Int): Int /* Return type being the Int*/{
@@ -204,6 +206,14 @@ class MainActivity : AppCompatActivity() {
             Log.i("dhl", "Mends everything Java doesn't do well in. ")
         }else{
             Log.i("dhl", "Is this null?")
+        }
+    }
+
+    //Object is also a keyword, which promises that certain objects in the memory
+    //is promised to be a singleton.
+    object /* What the heck? */ SomeThing{
+        fun grabAString(): String{
+            return "SomeThing object is entirely Singleton."
         }
     }
 }
