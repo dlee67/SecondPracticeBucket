@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     //var notSoLolKotlin: Kotlin = Kotlin("Java")
     var cPP: CPP = CPP("pointers", "difficult")
     var java: Java = Java("James Gosling")
+    var coordinate: Coordinate = Coordinate(5, 5)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,6 +95,14 @@ class MainActivity : AppCompatActivity() {
         java.description()
 
         Log.i("dhl", SomeThing.grabAString()) //Why not just use a design pattern?
+        javaEight.description()
+
+        javaEight.Complains().complain("Do I have to create an interface, "
+        + "just for the sake of creating a lambda function?")
+        Log.i("dhl", PureJava.saySomething())
+        var someLanguageRight: SomeLanguage = SomeLanguage()
+        Log.i("dhl", someLanguageRight.desc.toString())
+        Log.i("dhl", someLanguageRight.age.toString())
     }
 
     fun sum(a: Int, b: Int): Int /* Return type being the Int*/{
@@ -215,5 +224,22 @@ class MainActivity : AppCompatActivity() {
         fun grabAString(): String{
             return "SomeThing object is entirely Singleton."
         }
+    }
+
+    object javaEight: Java("James Gosling"){
+        override fun description(){
+            Log.i("dhl", "Has \"Lambdas\" and Streams.")
+        }
+
+        class Complains{
+            fun complain(complains: String){
+                Log.i("dhl", complains)
+            }
+        }
+    }
+
+    //There is something called data class, which is specifically made to hold data.
+    data class Coordinate(val x: Int, val y: Int){
+        val isInBounds = x >= 0 && y >= 0
     }
 }

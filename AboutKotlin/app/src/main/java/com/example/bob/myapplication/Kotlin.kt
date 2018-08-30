@@ -13,7 +13,7 @@ import android.util.Log
     That above is the grammars for the setters and getters... wtf?
  */
 //The line directly below is considered to be a primary constructor.
-class Kotlin (_name: String, _age: Int){
+open class Kotlin (_name: String, _age: Int){
 
     //Putting the underscore next to the arguments of the constructors
     //seems to be convention of the Kotlin.
