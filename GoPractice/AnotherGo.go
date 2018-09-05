@@ -1,4 +1,4 @@
-package main
+rpackage main
 
 import (
    "fmt"

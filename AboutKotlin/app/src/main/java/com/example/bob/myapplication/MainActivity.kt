@@ -4,6 +4,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
+import kotlinx.coroutines.experimental.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,6 +38,7 @@ class MainActivity : AppCompatActivity() {
     var cPP: CPP = CPP("pointers", "difficult")
     var java: Java = Java("James Gosling")
     var coordinate: Coordinate = Coordinate(5, 5)
+    var stopLooping: Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,6 +105,18 @@ class MainActivity : AppCompatActivity() {
         var someLanguageRight: SomeLanguage = SomeLanguage()
         Log.i("dhl", someLanguageRight.desc.toString())
         Log.i("dhl", someLanguageRight.age.toString())
+        Log.i("dhl", "Testing... Testing... Testing...")
+        //One Thread can run many coroutines.
+        launch{
+            for (i in 1..10){
+                Log.i("dhl", "Spinning, and spinning...")
+                delay(1000)
+            }
+            stopLooping = false
+        }
+        while(!stopLooping){
+            Thread.sleep(1000)
+        }
     }
 
     fun sum(a: Int, b: Int): Int /* Return type being the Int*/{
